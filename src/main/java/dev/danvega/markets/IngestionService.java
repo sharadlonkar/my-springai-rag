@@ -2,7 +2,7 @@ package dev.danvega.markets;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.ai.reader.pdf.ParagraphPdfDocumentReader;
+import org.springframework.ai.reader.pdf.PagePdfDocumentReader;
 import org.springframework.ai.transformer.splitter.TextSplitter;
 import org.springframework.ai.transformer.splitter.TokenTextSplitter;
 import org.springframework.ai.vectorstore.VectorStore;
@@ -17,7 +17,8 @@ public class IngestionService implements CommandLineRunner {
     private static final Logger log = LoggerFactory.getLogger(IngestionService.class);
     private final VectorStore vectorStore;
 
-    @Value("classpath:/docs/article_thebeatoct2024.pdf")
+    //@Value("classpath:/docs/article_thebeatoct2024.pdf")
+    @Value("classpath:/docs/USAFacts.pdf")
     private Resource marketPDF;
 
     public IngestionService(VectorStore vectorStore) {
@@ -26,7 +27,7 @@ public class IngestionService implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        var pdfReader = new ParagraphPdfDocumentReader(marketPDF);
+        var pdfReader = new PagePdfDocumentReader(marketPDF);
         TextSplitter textSplitter = new TokenTextSplitter();
         vectorStore.accept(textSplitter.apply(pdfReader.get()));
         log.info("VectorStore Loaded with data!");
