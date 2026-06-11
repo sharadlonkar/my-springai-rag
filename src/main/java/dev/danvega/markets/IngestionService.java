@@ -24,8 +24,6 @@ public class IngestionService implements CommandLineRunner {
     private final ChatClient chatClient;
     public static final String ANSI_RESET = "\u001B[0m";
 
-    public static final String ANSI_BOLD = "\u001B[1m";
-
     public static final String ANSI_YELLOW = "\u001B[33m";
 
     //@Value("classpath:/docs/article_thebeatoct2024.pdf")
@@ -34,7 +32,6 @@ public class IngestionService implements CommandLineRunner {
 
     /**
      * Constructs an IngestionService with a configured ChatClient and VectorStore.
-     *
      * Initializes the service by configuring a ChatClient with a default system prompt
      * for USA facts assistance and enabling Retrieval-Augmented Generation (RAG) through
      * a QuestionAnswerAdvisor. The advisor uses the provided VectorStore with default
@@ -54,13 +51,23 @@ public class IngestionService implements CommandLineRunner {
                 .build();
     }
 
+    /**
+     * Executes the command line runner to load PDF documents into the vector store and start an interactive chat session.
+     * This method reads a PDF document, splits its text into chunks using a token-based text splitter, and loads
+     * the chunks into the vector store for retrieval-augmented generation. After loading the data, it starts an
+     * interactive console-based chat loop where users can ask questions about USA facts. The assistant responds
+     * using the chat client configured with RAG capabilities, retrieving relevant context from the vector store
+     * to answer user queries. The chat loop continues indefinitely until the application is terminated.
+     *
+     * @param args the command line arguments passed to the application
+     * @throws Exception if an error occurs during PDF reading, vector store loading, or chat interaction
+     */
     @Override
-    public void run(String... args) throws Exception {
+    public void run(String... args)  {
         var pdfReader = new PagePdfDocumentReader(knowledgePDF);
         TextSplitter textSplitter = new TokenTextSplitter();
         vectorStore.accept(textSplitter.apply(pdfReader.get()));
         log.info("VectorStore Loaded with data!");
-        /*******/
         System.out.println("\nI am your assistant. Ask me obvious questions about USA\n");
         try (Scanner scanner = new Scanner(System.in)) {
             while (true) {
@@ -71,7 +78,5 @@ public class IngestionService implements CommandLineRunner {
                         .content());
             }
         }
-        /*******/
-
     }
 }

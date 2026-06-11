@@ -8,7 +8,7 @@ import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import java.util.regex.Pattern;
+
 
 @RestController
 public class ChatController {
@@ -27,7 +27,7 @@ public class ChatController {
     public String chat(@RequestParam(name = "prompt", required = false) String prompt) {
         log.info("Received chat input: text='{}'", prompt);
         prompt = (prompt == null || prompt.isBlank())
-                ? "How did the Federal Reserve's recent interest rate cut impact various asset classes according to the analysis?"
+                ? "What is capital of USA?"
                 : prompt;
 
         // Log the final prompt value that will be sent to the model
