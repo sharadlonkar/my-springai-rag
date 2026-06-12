@@ -64,14 +64,18 @@ public class IngestionService implements CommandLineRunner {
      */
     @Override
     public void run(String... args)  {
+        // Read the PDF document page by page
         var pdfReader = new PagePdfDocumentReader(knowledgePDF);
+        // Split the document into token-sized chunks for embedding
         TextSplitter textSplitter = new TokenTextSplitter();
+        // Load the split chunks into the vector store for RAG retrieval
         vectorStore.accept(textSplitter.apply(pdfReader.get()));
         log.info("VectorStore Loaded with data!");
         System.out.println("\nI am your assistant. Ask me obvious questions about USA\n");
         try (Scanner scanner = new Scanner(System.in)) {
             while (true) {
                 System.out.print("\n" + ANSI_YELLOW + "USER: " + ANSI_RESET);
+                // Send user input to the chat client and print the response
                 System.out.println("\n" + ANSI_YELLOW + "ASSISTANT: " + ANSI_RESET
                         + chatClient.prompt(scanner.nextLine()) // Get the user input
                         .call()
